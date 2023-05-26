@@ -46,7 +46,7 @@ exports.signup = async (req, res) => {
 }
 
 exports.signin = async (req, res) => {
-    const user = await User.find({ userId: req.body.userId})
+    const user = await User.findOne({ userId: req.body.userId})
     console.log(user)
 
     if(!user){
@@ -55,7 +55,7 @@ exports.signin = async (req, res) => {
         })
         return
     }
-
+    console.log(user.userStatus)
     if(user.userStatus != constants.userStatus.approved){
         res.status(403).send({
             msg:`Can't allow login as user is in status : [${user.userStatus}]`
@@ -74,7 +74,7 @@ exports.signin = async (req, res) => {
         })
         return
     }
-    let token = jwt.sign({id: user.userId}, config.secret, { expiresIn: 86400})
+    let token = jwt.sign({userId: user.userId}, config.secret, { expiresIn: 86400})
 
     res.status(200).send({
         name: user.name,
