@@ -1,2 +1,2 @@
 # CRM project 
-   - Building a CRM app Backend project with nodejs, expressjs, mongoDB, mongoose  following MVC patterns
+   - Building a CRM app Backend project with NodeJs, ExpressJs, MongoDB, Mongoose  following MVC patterns
