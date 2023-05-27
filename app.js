@@ -7,19 +7,22 @@ const User = require('./models/user.model')
 const bcrypt = require("bcryptjs")
 const constants = require("./utils/constants")
 mongoose.connect(dbConfig.DB_URL)
+
 const db = mongoose.connection
 db.on("error", ()=> console.log("Can't connect to DB"))
 db.once("open", ()=>{
     console.log("Connected to Mongo DB")
     init()
 } )
+
 app.use(express.json())
 
-let authRouter = require('./routes/auth.routes')
-let userRouter = require('./routes/user.routes')
+require('./routes/auth.routes')(app)
+require('./routes/user.routes')(app)
+require('./routes/ticket.routes')(app)
 
-authRouter(app)
-userRouter(app)
+
+
 async function init(){
     let user = await User.findOne({userId: 'admin'})
     

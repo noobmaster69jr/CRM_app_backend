@@ -133,7 +133,7 @@ exports.update = async (req, res) => {
         const user = await User.findOneAndUpdate({
             userId:userIdReq
         },{
-            useStatus: req.body.userStatus
+            userStatus: req.body.userStatus
         }).exec()
         res.status(200).send({
             message:`User record has been updated successfully`
