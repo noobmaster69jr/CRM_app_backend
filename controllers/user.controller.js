@@ -107,25 +107,25 @@ exports.findAll = async (req, res) => {
 }
 
 exports.findById = async (req, res) => {
-    const userIdReq = req.params.userId
-    let user
-    try{
-        user = await User.find({
-            userId: userIdReq
-        })
-    }catch(err){
-        res.status(500).send({
-            message:"Internal server error"
-        })
+  const userIdReq = req.params.userId;
+  let user
+  try {
+    user = await User.find({
+      userId: userIdReq,
+    });
+    if (user.length > 0) {
+      res.status(200).send(objectConverter.userResponse(user));
+    } else {
+      res.status(200).send({
+        message: `User with this id [${userIdReq}] is not present`,
+      });
     }
-    if(user.length > 0){
-        res.status(200).send(objectConverter.userResponse(user))
-    }else{
-        res.status(200).send({
-            message:`user with this ${userIdReq} not present`
-        })
-    }
-}
+  } catch (err) {
+    res.status(500).send({
+      message: "Internal Server Error",
+    });
+  }
+};
 
 exports.update = async (req, res) => {
     const userIdReq = req.params.userId
@@ -135,11 +135,17 @@ exports.update = async (req, res) => {
         },{
             userStatus: req.body.userStatus
         }).exec()
-        res.status(200).send({
-            message:`User record has been updated successfully`
-        })
+         if (user) {
+           res.status(200).send({
+             message: `User record has been updated successfully`,
+           });
+         } else {
+           res.status(200).send({
+             message: `No user with id found!`,
+           });
+         }
     }catch(err){
-        console.err("Error while updating ", err)
+        console.log("Error while updating ", err)
         res.status(500).send({
             message: "some internal error occured"
         })
