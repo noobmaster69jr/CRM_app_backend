@@ -43,7 +43,48 @@ exports.createTicket = async (req, res) => {
 };
 
 
-exports.updateTicket = async (req, res) => {};
+
+
+const canUpdate = (user, ticket) => {
+  return (
+    user.userId == ticket.reporter ||
+    user.userId == ticket.assignee ||
+    user.userType == constants.userTypes.admin
+  );
+};
+
+exports.updateTicket = async (req, res) => {
+  const ticket = await Ticket.findOne({ _id: req.params.id });
+
+  const savedUser = await User.findOne({
+    userId: req.body.userId,
+  });
+
+  if (canUpdate(savedUser, ticket)) {
+    ticket.title = req.body.title != undefined ? req.body.title : ticket.title;
+    ticket.description =
+      req.body.description != undefined
+        ? req.body.description
+        : ticket.description;
+    ticket.ticketPriority =
+      req.body.ticketPriority != undefined
+        ? req.body.ticketPriority
+        : ticket.ticketPriority;
+    ticket.status =
+      req.body.status != undefined ? req.body.status : ticket.status;
+    ticket.assignee =
+      req.body.assignee != undefined ? req.body.assignee : ticket.assignee;
+    await ticket.save();
+    res.status(200).send(objectConverter.ticketResponse(ticket));
+  } else {
+    console.log(
+      "Ticket update was attempted by someone without access to the ticket"
+    );
+    res.status(401).send({
+      message: "Ticket can be updated only by the customer who created it",
+    });
+  }
+};
 
 exports.getAllTicket = async (req, res) => {};
 
